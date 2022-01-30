@@ -1,3 +1,6 @@
+using CosmosDbCrud.Data.Seed;
+using CosmosDbCrud.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,7 +10,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+await builder.Services.AddCosmosDbClient(builder.Configuration);
+builder.Services.AddRepositories(builder.Configuration);
+
 var app = builder.Build();
+
+await DataSeed.Seed(app.Services, app.Configuration);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
