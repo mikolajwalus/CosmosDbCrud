@@ -4,12 +4,14 @@ namespace CosmosDbCrud.Data.CosmosDbRepository
 {
     public abstract class CosmosDbRepository<T> : ICosmosDbRepository<T> where T : class, ICosmosDbItem
     {
+        private readonly ILogger _logger;
         private Container _container;
 
         public CosmosDbRepository(
             CosmosClient cosmosDbClient,
             string databaseName,
-            string containerName)
+            string containerName, 
+            ILogger logger)
         {
             if (cosmosDbClient is null)
             {
@@ -25,6 +27,8 @@ namespace CosmosDbCrud.Data.CosmosDbRepository
             {
                 throw new ArgumentException($"'{nameof(containerName)}' cannot be null or empty.", nameof(containerName));
             }
+
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _container = cosmosDbClient.GetContainer(databaseName, containerName);
         }
@@ -46,7 +50,7 @@ namespace CosmosDbCrud.Data.CosmosDbRepository
                 var response = await _container.ReadItemAsync<T>(id, new PartitionKey(partitionKey));
                 return response.Resource;
             }
-            catch (CosmosException) //For handling item not found and other exceptions
+            catch (CosmosException) //TODO: handle not found
             {
                 return null;
             }
@@ -57,10 +61,14 @@ namespace CosmosDbCrud.Data.CosmosDbRepository
             var query = _container.GetItemQueryIterator<T>(new QueryDefinition(queryString));
 
             var results = new List<T>();
+
+            LogOperationInfo(nameof(GetMultipleAsync));
+
             while (query.HasMoreResults)
             {
                 var response = await query.ReadNextAsync();
                 results.AddRange(response.ToList());
+                LogRequestUnits(response);
             }
 
             return results;
@@ -69,6 +77,16 @@ namespace CosmosDbCrud.Data.CosmosDbRepository
         public async Task UpdateAsync(T item)
         {
             await _container.UpsertItemAsync(item, new PartitionKey(item.Key));
+        }
+
+        private void LogOperationInfo(string operation)
+        {
+            _logger.LogInformation($"Logging chagre for: \nOperation: {operation}");
+        }
+
+        private void LogRequestUnits(FeedResponse<T> response)
+        {
+            _logger.LogInformation($"Count: {response.Count}\nRequestCharge: {response.RequestCharge}");
         }
     }
 }

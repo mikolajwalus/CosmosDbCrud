@@ -1,5 +1,4 @@
-﻿
-namespace CosmosDbCrud.Data.CosmosDbRepository
+﻿namespace CosmosDbCrud.Data.CosmosDbRepository
 {
     public interface ICosmosDbRepository<T> where T : class, ICosmosDbItem
     {

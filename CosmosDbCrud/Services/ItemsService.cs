@@ -3,11 +3,11 @@ using Microsoft.Azure.Cosmos;
 
 namespace CosmosDbCrud.Services
 {
-    public class CosmosDbService : ICosmosDbService
+    public class ItemsService : IItemsService
     {
         private Container _container;
 
-        public CosmosDbService(
+        public ItemsService(
             CosmosClient cosmosDbClient,
             string databaseName,
             string containerName)

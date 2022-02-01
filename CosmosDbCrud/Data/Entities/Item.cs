@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CosmosDbCrud.Data.CosmosDbRepository;
+using Newtonsoft.Json;
 
 namespace CosmosDbCrud.Data.Entities
 {

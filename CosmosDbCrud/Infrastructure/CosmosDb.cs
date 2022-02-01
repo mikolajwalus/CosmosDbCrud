@@ -47,7 +47,8 @@ namespace CosmosDbCrud.Infrastructure
             var itemsDatabase = config["ItemsDatabase"];
             var itemsContainer = config["ItemsContainer"];
 
-            services.AddScoped<IItemRepository, ItemRepository>(services => new ItemRepository(services.GetService<CosmosClient>(), itemsDatabase, itemsContainer));
+            services.AddScoped<IItemRepository, ItemRepository>(services => 
+                new ItemRepository(services.GetService<CosmosClient>(), itemsDatabase, itemsContainer, services.GetService<ILogger<ItemRepository>>()));
         }
 
         private static IConfigurationSection GetCosmosDbConfig(IConfiguration config) => config.GetSection("CosmosDb");

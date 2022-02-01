@@ -6,7 +6,8 @@ namespace CosmosDbCrud.Data
 {
     public class ItemRepository : CosmosDbRepository<Item>, IItemRepository
     {
-        public ItemRepository(CosmosClient cosmosDbClient, string databaseName, string containerName) : base(cosmosDbClient, databaseName, containerName)
+        public ItemRepository(CosmosClient cosmosDbClient, string databaseName, string containerName, ILogger<ItemRepository> logger) 
+            : base(cosmosDbClient, databaseName, containerName, logger)
         {
         }
     }

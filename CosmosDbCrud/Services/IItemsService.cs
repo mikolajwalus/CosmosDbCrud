@@ -2,7 +2,7 @@
 
 namespace CosmosDbCrud.Services
 {
-    public interface ICosmosDbService
+    public interface IItemsService
     {
         Task AddAsync(Item item);
         Task DeleteAsync(string id, string partitionKey);
